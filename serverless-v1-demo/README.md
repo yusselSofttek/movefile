@@ -1,4 +1,4 @@
-# Serverless-V1-Demo-Java QuickStart
+# ServerlessV1Demo QuickStart
 
 The Serverless Application Model Command Line Interface (SAM CLI) is an extension of the AWS CLI that adds functionality
 for building and testing Lambda applications. It uses Docker to run your functions in an Amazon Linux environment that
@@ -39,15 +39,15 @@ Note that in order to do this, you will need to have working AWS credentials for
 either `default` or env var `AWS_PROFILE` points to them.
 
 
-# Serverless-V1-Demo-Java Details
+# ServerlessV1Demo Details
 
 This project contains source code and supporting files for a serverless application that you can deploy with the AWS SAM
 CLI. It includes the following files and folders:
 
 
 
-- serverless-v1-demo-java/src/main/ - Code for three Lambda functions, including log configuration.
-- serverless-v1-demo-java-core/ - Shared code (DB objects) and resources (log config).
+- serverless-v1-demo/src/main/ - Code for three Lambda functions, including log configuration.
+- serverless-v1-demo-core/ - Shared code (DB objects) and resources (log config).
 - events/sqs.json - An example SQSEvent for local testing.
 - pom.xml - Defines this multi-module Maven project with the three modules above.
 - samconfig.xml - SAM config for deployments.
@@ -60,7 +60,7 @@ This example sets up the following ApiGateway Lambdas:
 http://127.0.0.1:3000/hello/{name} [GET] is a simple Hello, World lambda
 This code has the following entry points configured:
 
-1. `serverless-v1-demo-java-api/src/main/java/com/turnitin/serverless-v1-demo-java/Serverless-V1-Demo-JavaGet` This entry point is for handling regular HTTP requests.
+1. `serverless-v1-demo-api/src/main/java/com/turnitin/serverlessv1demo/ServerlessV1DemoGet` This entry point is for handling regular HTTP requests.
 # Dependencies
 
 The TurnitinContext gives you an easy way to access various services (AWS as well as internal) simply by declaring the need when instanciating the TurnitinContext with the

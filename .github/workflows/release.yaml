@@ -1,0 +1,29 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_to:
+        type: string
+        description: Name of environment for which to issue a release.
+        default: dev
+      deployment_regions:
+        type: string
+        description: Comma-delimited list of regions to deploy to in the target environment. (Leave empty to deploy to all regions.)
+        required: false
+  push:
+    branches:
+      - "main"
+
+jobs:
+  issue-release:
+    name: Issue release
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'github_sha')
+    uses: turnitin/github-actions/.github/workflows/triton-release-sam-deploy.yaml@main
+    with:
+      app_name: serverless-v1-demo-java
+      app_team: DevOps
+      deploy_to: ${{ inputs.deploy_to }}
+      deployment_regions: ${{ inputs.deployment_regions }}
+      max_concurrency: 1
+      use_samconfig: true

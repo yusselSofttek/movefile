@@ -1,0 +1,30 @@
+name: Custom build
+run-name: Build ${{ inputs.deployment_target }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      deployment_target:
+        description: "Target environment to deploy release into"
+        type: choice
+        options:
+          - dev
+          - qa
+      deployment_regions:
+        type: string
+        description: Comma-delimited list of regions to deploy to in the target environment. (Leave empty to deploy to all regions.)
+        required: false
+
+jobs:
+  build:
+    name: Build ${{ github.ref_name }} and deploy to ${{ inputs.deployment_target }}
+    uses: turnitin/github-actions/.github/workflows/triton-build-without-sar.yaml@main
+    with:
+      environment: ${{ inputs.deployment_target }}
+      deployment_regions: ${{ inputs.deployment_regions }}
+      app_name: serverless-v1-demo-java
+      release_repository: turnitin/serverless-v1-demo-java
+      configure_java: true
+      use_container: ""
+      use_samconfig: true
+    secrets: inherit

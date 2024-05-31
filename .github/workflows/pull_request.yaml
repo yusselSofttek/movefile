@@ -1,0 +1,14 @@
+name: Pull request
+
+on:
+  pull_request:
+
+jobs:
+  pull-request:
+    name: Build application
+    uses: turnitin/github-actions/.github/workflows/triton-pull-request.yaml@main
+    with:
+      configure_java: true
+      use_container: ""
+      use_samconfig: true
+    secrets: inherit

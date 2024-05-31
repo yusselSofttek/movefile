@@ -1,0 +1,35 @@
+name: Deploy source to target
+run-name: Deploy ${{ inputs.source_environment }} to ${{ inputs.target_environment }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_environment:
+        description: "Source environment"
+        type: choice
+        options:
+          - dev
+          - qa
+      target_environment:
+        description: "Target environment"
+        type: choice
+        options:
+          - dev
+          - qa
+      deployment_regions:
+        type: string
+        description: Comma-delimited list of regions to deploy to in the target environment. (Leave empty to deploy to all regions.)
+        required: false
+
+jobs:
+  build:
+    name: Copy release manifests from ${{ inputs.source_environment }} to ${{ inputs.target_environment }}
+    uses: turnitin/github-actions/.github/workflows/triton-deploy-source-to-target-without-sar.yaml@main
+    with:
+      app_name: serverless-v1-demo-java
+      release_repository: turnitin/serverless-v1-demo-java
+      source: ${{ inputs.source_environment }}
+      target: ${{ inputs.target_environment }}
+      deployment_regions: ${{ inputs.deployment_regions }}
+      use_samconfig: true
+    secrets: inherit
