@@ -1,0 +1,49 @@
+# SemanticVersion: 0.0.1-dev-5217962bbdcbcc0522664a9211ca2aafdde34899
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: ' Example(s) of lambda(s) - responding to HTTP requests '
+Parameters:
+  StackEnv:
+    Type: String
+    Default: Dev001
+    Description: Stack prefix/suffix to make resource names unique in the Tii eco-system per environment.
+Globals:
+  Function:
+    MemorySize: 1536
+    Runtime: java11
+    Timeout: 30
+  Api:
+    Cors:
+      AllowMethods: '''GET,PUT,POST,DELETE,OPTIONS'''
+      AllowHeaders: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key'''
+      AllowOrigin: '''*'''
+      AllowCredentials: '''*'''
+Resources:
+  ServerlessV1DemoApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName:
+        Ref: StackEnv
+      EndpointConfiguration:
+        Type: REGIONAL
+    Metadata:
+      SamResourceId: ServerlessV1DemoApi
+  ServerlessV1DemoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://tii-triton-artifacts-us-west-2/serverless-v1-demo-java/95915030bb21817eeb14ff45e6900d73
+      Handler: com.turnitin.serverlessv1demo.api.ServerlessV1DemoGet
+      Events:
+        ServerlessV1DemoHelloApi:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: ServerlessV1DemoApi
+            Path: /hello/{who}
+            Method: GET
+Outputs:
+  ServerlessV1DemoApiRootURL:
+    Description: API Gateway root URL for ServerlessV1Demo API
+    Value:
+      Fn::Sub: https://${ServerlessV1DemoApi}.execute-api.${AWS::Region}.amazonaws.com/${StackEnv}
+
