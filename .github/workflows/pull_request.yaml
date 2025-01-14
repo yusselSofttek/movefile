@@ -12,20 +12,20 @@ jobs:
       configure_java: true
     secrets: inherit
 
-  pull-request-self-hosted:
-    name: Build application on self-hosted runner
-    uses: turnitin/github-actions/.github/workflows/triton-pull-request.yaml@main
-    with:
-      runs_on: "['self-hosted']"
-      use_cache: --cached
-      configure_java: true
-    secrets: inherit
+  # pull-request-self-hosted:
+  #   name: Build application on self-hosted runner
+  #   uses: turnitin/github-actions/.github/workflows/triton-pull-request.yaml@main
+  #   with:
+  #     runs_on: "['self-hosted']"
+  #     use_cache: --cached
+  #     configure_java: true
+  #   secrets: inherit
 
-  pull-request-test-jammy:
-    name: Build application (test-jammy)
-    uses: turnitin/github-actions/.github/workflows/triton-pull-request.yaml@main
-    with:
-      runs_on: "['aws-hosted', 'tests', 'jammy']"
-      use_cache: --cached
-      configure_java: true
-    secrets: inherit
+  # pull-request-test-jammy:
+  #   name: Build application (test-jammy)
+  #   uses: turnitin/github-actions/.github/workflows/triton-pull-request.yaml@main
+  #   with:
+  #     runs_on: "['aws-hosted', 'tests', 'jammy']"
+  #     use_cache: --cached
+  #     configure_java: true
+  #   secrets: inherit
