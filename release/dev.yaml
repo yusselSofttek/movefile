@@ -1,49 +1,47 @@
-# SemanticVersion: 0.0.1-dev-5217962bbdcbcc0522664a9211ca2aafdde34899
+# SemanticVersion: 0.0.1-dev-3778d1a1378bc294766cb2e32fdca0d953f50aa5
+# BuildWorkflow: https://github.com/turnitin/serverless-v1-demo-java/actions/runs/12769591911
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: ' Example(s) of lambda(s) - responding to HTTP requests '
-Parameters:
-  StackEnv:
-    Type: String
-    Default: Dev001
-    Description: Stack prefix/suffix to make resource names unique in the Tii eco-system per environment.
+Description: "serverless-v1-demo-java\nSample SAM Template for serverless-v1-demo-java\n"
 Globals:
   Function:
-    MemorySize: 1536
-    Runtime: java11
-    Timeout: 30
-  Api:
-    Cors:
-      AllowMethods: '''GET,PUT,POST,DELETE,OPTIONS'''
-      AllowHeaders: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key'''
-      AllowOrigin: '''*'''
-      AllowCredentials: '''*'''
+    Timeout: 20
+    MemorySize: 128
 Resources:
-  ServerlessV1DemoApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName:
-        Ref: StackEnv
-      EndpointConfiguration:
-        Type: REGIONAL
-    Metadata:
-      SamResourceId: ServerlessV1DemoApi
-  ServerlessV1DemoFunction:
+  HelloWorldFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://tii-triton-artifacts-us-west-2/serverless-v1-demo-java/95915030bb21817eeb14ff45e6900d73
-      Handler: com.turnitin.serverlessv1demo.api.ServerlessV1DemoGet
+      CodeUri: s3://tii-triton-artifacts-us-west-2/serverless-v1-demo-java/6d6a9b7d9d71ae8bd4beaedd14ddde65
+      Handler: helloworld.App::handleRequest
+      Runtime: java11
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      Environment:
+        Variables:
+          PARAM1: VALUE
+          JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
       Events:
-        ServerlessV1DemoHelloApi:
+        HelloWorld:
           Type: Api
           Properties:
-            RestApiId:
-              Ref: ServerlessV1DemoApi
-            Path: /hello/{who}
-            Method: GET
+            Path: /hello
+            Method: get
 Outputs:
-  ServerlessV1DemoApiRootURL:
-    Description: API Gateway root URL for ServerlessV1Demo API
+  HelloWorldApi:
+    Description: API Gateway endpoint URL for Prod stage for Hello World function
     Value:
-      Fn::Sub: https://${ServerlessV1DemoApi}.execute-api.${AWS::Region}.amazonaws.com/${StackEnv}
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/
+  HelloWorldFunction:
+    Description: Hello World Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+        - HelloWorldFunction
+        - Arn
+  HelloWorldFunctionIamRole:
+    Description: Implicit IAM Role created for Hello World function
+    Value:
+      Fn::GetAtt:
+        - HelloWorldFunctionRole
+        - Arn
 
