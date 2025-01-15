@@ -6,7 +6,7 @@ on:
 jobs:
   pull-request:
     name: Build application
-    uses: turnitin/github-actions/.github/workflows/triton-pull-request.yaml@main
+    uses: turnitin/github-actions/.github/workflows/triton-pull-request.yaml@DEVOPS-18867
     with:
       use_cache: --cached
       configure_java: true
