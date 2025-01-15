@@ -18,7 +18,7 @@ on:
 jobs:
   build:
     name: Build ${{ github.ref_name }} and deploy to ${{ inputs.deployment_target }}
-    uses: turnitin/github-actions/.github/workflows/triton-build-without-sar.yaml@main
+    uses: turnitin/github-actions/.github/workflows/triton-build-without-sar.yaml@DEVOPS-18867
     with:
       environment: ${{ inputs.deployment_target }}
       deployment_regions: ${{ inputs.deployment_regions }}

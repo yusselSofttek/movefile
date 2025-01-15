@@ -10,7 +10,7 @@ jobs:
     build-main:
       name: Build for main
       if: ${{ github.ref_name == 'main' && !contains(github.event.head_commit.message, 'github_sha') }}
-      uses: turnitin/github-actions/.github/workflows/triton-build-without-sar.yaml@main
+      uses: turnitin/github-actions/.github/workflows/triton-build-without-sar.yaml@DEVOPS-18867
       with:
         environment: dev
         app_name: serverless-v1-demo-java
