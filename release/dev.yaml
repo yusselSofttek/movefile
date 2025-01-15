@@ -1,5 +1,5 @@
-# SemanticVersion: 0.0.2-dev-770ffdcdd3af7d55722d56e50ee7cbc93b322ab3
-# BuildWorkflow: https://github.com/turnitin/serverless-v1-demo-java/actions/runs/12775377675
+# SemanticVersion: 0.0.2-dev-ad711878ee8084794f56388abf30c440e9532ade
+# BuildWorkflow: https://github.com/turnitin/serverless-v1-demo-java/actions/runs/12789821846
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: "serverless-v1-demo-java\nSample SAM Template for serverless-v1-demo-java\n"
@@ -11,7 +11,7 @@ Resources:
   HelloWorldFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://tii-triton-artifacts-us-west-2/serverless-v1-demo-java/b4c9fcecf33715cc083b85fc21b1982f
+      CodeUri: s3://tii-triton-artifacts-us-west-2/serverless-v1-demo-java/256590a74ad24fa7d00bf3f9d70182aa
       Handler: helloworld.App::handleRequest
       Runtime: java11
       Architectures:
