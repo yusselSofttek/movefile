@@ -5,11 +5,14 @@ version = 0.1
 stack_name = "serverless-v1-demo-java-local-dev"
 resolve_s3 = true
 s3_prefix = "serverless-v1-demo-java-local-dev"
-region = "us-west-2"
+region = "us-east-1"
 capabilities = "CAPABILITY_IAM"
 parameter_overrides = []
 
 # These profiles are used by the github-actions `sam deploy` workflow.
+confirm_changeset = true
+disable_rollback = true
+image_repositories = []
 [dev-us-west-2.deploy.parameters]
 parameter_overrides = []
 
