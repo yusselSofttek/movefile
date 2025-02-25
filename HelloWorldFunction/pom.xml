@@ -50,6 +50,20 @@
     </dependencies>
 
     <build>
+    <resources>
+        <resource>
+            <directory>${project.basedir}</directory>
+            <includes>
+                <include>input.csv</include>
+            </includes>
+        </resource>
+        <resource>
+            <directory>${project.basedir}</directory>
+            <includes>
+                <include>output.csv</include>
+            </includes>
+        </resource>
+      </resources>
       <plugins>
     
         <plugin>

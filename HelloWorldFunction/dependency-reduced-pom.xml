@@ -6,6 +6,20 @@
   <name>Movin files for SAM CLI.</name>
   <version>1.0-SNAPSHOT</version>
   <build>
+    <resources>
+      <resource>
+        <directory>${project.basedir}</directory>
+        <includes>
+          <include>input.csv</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>${project.basedir}</directory>
+        <includes>
+          <include>output.csv</include>
+        </includes>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>

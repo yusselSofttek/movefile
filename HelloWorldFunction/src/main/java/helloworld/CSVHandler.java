@@ -11,35 +11,35 @@ public class CSVHandler implements RequestHandler<Map<String, String>, String> {
 
     @Override
     public String handleRequest(Map<String, String> event, Context context) {
-        // Verificar si el evento tiene las claves correctas
+        // Check if the event contains the required keys
         if (event == null || !event.containsKey("inputFilePath") || !event.containsKey("outputFilePath")) {
-            return "❌ Error: inputFilePath y outputFilePath son requeridos en el JSON de entrada.";
+            return "❌ Error: inputFilePath and outputFilePath are required in the input JSON.";
         }
 
         String inputFilePath = event.get("inputFilePath");
         String outputFilePath = event.get("outputFilePath");
 
-        // Validar que inputFilePath no sea null
+        // Validate that inputFilePath is not null
         if (inputFilePath == null || inputFilePath.trim().isEmpty()) {
-            return "❌ Error: inputFilePath es nulo o vacío.";
+            return "❌ Error: inputFilePath is null or empty.";
         }
 
         try {
-            // Leer contenido del archivo CSV
-            System.out.println("📥 Leyendo el archivo: " + inputFilePath);
+            // Read the content of the CSV file
+            System.out.println("📥 Reading file: " + inputFilePath);
             String content = Files.lines(Paths.get(inputFilePath)).collect(Collectors.joining("\n"));
 
-            // Imprimir en consola
-            System.out.println("📝 Contenido del archivo:\n" + content);
+            // Print to console
+            System.out.println("📝 File content:\n" + content);
 
-            // Mover el archivo
+            // Move the file
             Files.move(Paths.get(inputFilePath), Paths.get(outputFilePath), StandardCopyOption.REPLACE_EXISTING);
-            System.out.println("✅ Archivo movido a: " + outputFilePath);
+            System.out.println("✅ File moved to: " + outputFilePath);
 
-            return "Archivo procesado correctamente: " + outputFilePath;
+            return "File successfully processed: " + outputFilePath;
         } catch (IOException e) {
             e.printStackTrace();
-            return "❌ Error al procesar el archivo: " + e.getMessage();
+            return "❌ Error processing the file: " + e.getMessage();
         }
     }
 }
