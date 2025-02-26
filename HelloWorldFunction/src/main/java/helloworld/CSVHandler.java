@@ -1,45 +1,39 @@
 package helloworld;
 
-import java.util.Map;
-import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.RequestHandler;
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.*;
-import java.util.stream.Collectors;
+import java.util.Map;
 
-public class CSVHandler implements RequestHandler<Map<String, String>, String> {
+public class CSVHandler {
 
-    @Override
-    public String handleRequest(Map<String, String> event, Context context) {
-        // Check if the event contains the required keys
-        if (event == null || !event.containsKey("inputFilePath") || !event.containsKey("outputFilePath")) {
-            return "❌ Error: inputFilePath and outputFilePath are required in the input JSON.";
+    public String handleRequest(Map<String, String> event) {
+        // Validar que el evento contiene outputFilePath
+        if (event == null || !event.containsKey("outputFilePath")) {
+            return "❌ Error: 'outputFilePath' is required in the input JSON.";
         }
 
-        String inputFilePath = event.get("inputFilePath");
+        // Definir el contenido del CSV
+        String input = "Course ID,Course Name,Instructor Lname,Instructor Fname,Instructor Title,StartDate,EndDate\n" +
+                       "62376,Legal_Writing_S01_(Campbell),Campbell,Samuel,Dr.,01/10/2013,20/12/2013";
+
+        // Obtener la ruta de salida del evento JSON
         String outputFilePath = event.get("outputFilePath");
 
-        // Validate that inputFilePath is not null
-        if (inputFilePath == null || inputFilePath.trim().isEmpty()) {
-            return "❌ Error: inputFilePath is null or empty.";
-        }
-
         try {
-            // Read the content of the CSV file
-            System.out.println("📥 Reading file: " + inputFilePath);
-            String content = Files.lines(Paths.get(inputFilePath)).collect(Collectors.joining("\n"));
+            // Guardar el CSV en la carpeta temporal /tmp/ de AWS Lambda
+            String tempFilePath = "/tmp/tempCSV.csv"; // Ruta válida en Lambda
+            Files.write(Paths.get(tempFilePath), input.getBytes());
+            System.out.println("📥 Archivo temporal creado en: " + tempFilePath);
 
-            // Print to console
-            System.out.println("📝 File content:\n" + content);
+            // Intentar mover el archivo a la ubicación final (esto fallará si la carpeta es de solo lectura)
+            Path destinationPath = Paths.get(outputFilePath);
+            Files.move(Paths.get(tempFilePath), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("✅ Archivo movido a: " + outputFilePath);
 
-            // Move the file
-            Files.move(Paths.get(inputFilePath), Paths.get(outputFilePath), StandardCopyOption.REPLACE_EXISTING);
-            System.out.println("✅ File moved to: " + outputFilePath);
-
-            return "File successfully processed: " + outputFilePath;
+            return "Archivo procesado correctamente en: " + outputFilePath;
         } catch (IOException e) {
             e.printStackTrace();
-            return "❌ Error processing the file: " + e.getMessage();
+            return "❌ Error al procesar el archivo: " + e.getMessage();
         }
     }
 }

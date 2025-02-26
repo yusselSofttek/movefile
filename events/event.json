@@ -1,4 +1,6 @@
 {
-  "inputFilePath": "C:\\Users\\irving.luna\\Documents\\ambiente\\AWS\\github\\movefile\\input.csv",
-  "outputFilePath": "C:\\Users\\irving.luna\\Documents\\ambiente\\AWS\\github\\movefile\\output.csv"
+  
+    "outputFilePath": "/tmp/output.csv"
+  
+  
 }
