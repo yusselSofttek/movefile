@@ -1,48 +1,39 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  serverless-v1-demo-java
-
-  Sample SAM Template for serverless-v1-demo-java
-
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
-Globals:
-  Function:
-    Timeout: 20
-    MemorySize: 128
+  serverless-s3-movefiles
+  AWS Lambda function triggered by an S3 event.
 
 Resources:
-  HelloWorldFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  # 📌 Función Lambda que procesa archivos de S3
+  XLSProcessingFunction:
+    Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./HelloWorldFunction/target/lambda.zip
-      Handler: helloworld.CSVHandler::handleRequest
-
+      Handler: helloworld.XLSHandler::handleRequest
       Runtime: java11
-      Architectures:
-        - x86_64
       MemorySize: 512
-      Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+      Timeout: 20
+      Environment:
         Variables:
-          PARAM1: VALUE
-          JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1 # More info about tiered compilation https://aws.amazon.com/blogs/compute/optimizing-aws-lambda-function-performance-for-java/
-      Events:
-        HelloWorld:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            Path: /hello
-            Method: get
+          INPUT_BUCKET: inputbucketlcy  # Referencia directa al bucket existente
+          OUTPUT_BUCKET: outputbucketlcy  # Referencia directa al bucket existente
+      Policies:
+        - S3ReadPolicy:
+            BucketName: inputbucketlcy  # Referencia directa al bucket existente
+        - S3WritePolicy:
+            BucketName: outputbucketlcy  # Referencia directa al bucket existente
+
+  # 📌 Permiso para que el bucket de entrada invoque la función Lambda
+  S3EventPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !GetAtt XLSProcessingFunction.Arn
+      Principal: "s3.amazonaws.com"
+      SourceArn: !Sub "arn:aws:s3:::inputbucketlcy"
 
 Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  HelloWorldApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  HelloWorldFunction:
-    Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+  XLSProcessingFunction:
+    Description: "ARN de la función Lambda"
+    Value: !GetAtt XLSProcessingFunction.Arn

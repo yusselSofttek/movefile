@@ -2,12 +2,12 @@ version = 0.1
 
 # This profile is used by `sam deploy` from an engineer's workstation.
 [default.deploy.parameters]
-stack_name = "serverless-v1-demo-java-local-dev"
+stack_name = "s3movingfilesv2"
 resolve_s3 = true
-s3_prefix = "serverless-v1-demo-java-local-dev"
+s3_prefix = "s3movingfilesv2"
 region = "us-east-1"
 capabilities = "CAPABILITY_IAM"
-parameter_overrides = []
+parameter_overrides = "Prefix=\"asg-qaone-lcy\" ShortRegion=\"use1\""
 
 # These profiles are used by the github-actions `sam deploy` workflow.
 confirm_changeset = true
