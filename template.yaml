@@ -4,36 +4,54 @@ Description: >
   serverless-s3-movefiles
   AWS Lambda function triggered by an S3 event.
 
+Parameters:
+  InputBucketName:
+    Type: String
+    Default: "inputbucketlcy"
+    Description: "Nombre del bucket S3 de entrada que ya existe"
+  OutputBucketName:
+    Type: String
+    Default: "outputbucketlcy"
+    Description: "Nombre del bucket S3 de salida que ya existe"
+
 Resources:
   # 📌 Función Lambda que procesa archivos de S3
-  XLSProcessingFunction:
+  S3ProcessingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ./HelloWorldFunction/target/lambda.zip
-      Handler: helloworld.XLSHandler::handleRequest
+      FunctionName: !Sub "${AWS::StackName}-FileProcessor"
+      CodeUri: ./FileProcessor/target/lambda.zip
+      Handler: helloworld.S3FileProcessor::handleRequest
       Runtime: java11
       MemorySize: 512
       Timeout: 20
       Environment:
         Variables:
-          INPUT_BUCKET: inputbucketlcy  # Referencia directa al bucket existente
-          OUTPUT_BUCKET: outputbucketlcy  # Referencia directa al bucket existente
+          INPUT_BUCKET: !Ref InputBucketName
+          OUTPUT_BUCKET: !Ref OutputBucketName
       Policies:
         - S3ReadPolicy:
-            BucketName: inputbucketlcy  # Referencia directa al bucket existente
+            BucketName: !Ref InputBucketName
         - S3WritePolicy:
-            BucketName: outputbucketlcy  # Referencia directa al bucket existente
-
-  # 📌 Permiso para que el bucket de entrada invoque la función Lambda
-  S3EventPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: "lambda:InvokeFunction"
-      FunctionName: !GetAtt XLSProcessingFunction.Arn
-      Principal: "s3.amazonaws.com"
-      SourceArn: !Sub "arn:aws:s3:::inputbucketlcy"
-
+            BucketName: !Ref OutputBucketName
+        - Statement:
+            - Effect: Allow
+              Action:
+                - "s3:GetObject"
+                - "s3:ListBucket"
+              Resource:
+                - !Sub "arn:aws:s3:::${InputBucketName}"
+                - !Sub "arn:aws:s3:::${InputBucketName}/*"  
+            - Effect: Allow
+              Action:
+                - "s3:GetObject"
+                - "s3:PutObject"
+                - "s3:ListBucket"
+              Resource:
+                - !Sub "arn:aws:s3:::${OutputBucketName}"
+                - !Sub "arn:aws:s3:::${OutputBucketName}/*"    
+     
 Outputs:
-  XLSProcessingFunction:
+  S3ProcessingFunction:
     Description: "ARN de la función Lambda"
-    Value: !GetAtt XLSProcessingFunction.Arn
+    Value: !GetAtt S3ProcessingFunction.Arn

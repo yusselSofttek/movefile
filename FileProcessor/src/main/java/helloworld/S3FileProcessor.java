@@ -61,18 +61,26 @@ public class S3FileProcessor {
         List<Map<String, String>> dataList = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         String[] headers = reader.readLine().split("\t"); // Leer encabezados
-        
+    
         String line;
         while ((line = reader.readLine()) != null) {
             String[] values = line.split("\t");
+    
+            // Si la línea no tiene la cantidad correcta de columnas, se ignora
+            if (values.length < headers.length) {
+                System.out.println("⚠️ Advertencia: Línea con datos incompletos ignorada.");
+                continue;
+            }
+    
             Map<String, String> row = new HashMap<>();
             for (int i = 0; i < headers.length; i++) {
-                row.put(headers[i], values[i]);
+                row.put(headers[i], values.length > i ? values[i] : ""); // Evitar OutOfBounds
             }
             dataList.add(row);
         }
         return dataList;
     }
+    
 
     // 📌 Método para procesar archivos XLSX
     private List<Map<String, String>> processXlsxFile(InputStream inputStream) throws IOException {
