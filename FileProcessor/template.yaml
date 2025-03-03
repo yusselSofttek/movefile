@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  serverless-s3-movefiles
+  AWS Lambda function triggered by an S3 event.
+
+Parameters:
+  InputBucketName:
+    Type: String
+    Default: "inputbucketlcy"
+    Description: "Nombre del bucket S3 de entrada que ya existe"
+  OutputBucketName:
+    Type: String
+    Default: "outputbucketlcy"
+    Description: "Nombre del bucket S3 de salida que ya existe"
+
+Resources:
+  # 📌 Función Lambda que procesa archivos de S3
+  S3ProcessingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-FileProcessor"
+      CodeUri: ./FileProcessor/target/lambda.zip
+      Handler: helloworld.S3FileProcessor::handleRequest
+      Runtime: java11
+      MemorySize: 512
+      Timeout: 20
+      Environment:
+        Variables:
+          INPUT_BUCKET: !Ref InputBucketName
+          OUTPUT_BUCKET: !Ref OutputBucketName
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref InputBucketName
+        - S3WritePolicy:
+            BucketName: !Ref OutputBucketName
+      Events:
+        S3EventTrigger:
+          Type: S3
+          Properties:
+            Bucket: !Ref InputBucketName
+            Events: s3:ObjectCreated:*
+
+Outputs:
+  S3ProcessingFunction:
+    Description: "ARN de la función Lambda"
+    Value: !GetAtt S3ProcessingFunction.Arn
