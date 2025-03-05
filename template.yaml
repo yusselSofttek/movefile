@@ -39,6 +39,7 @@ Resources:
               Action:
                 - "s3:GetObject"
                 - "s3:ListBucket"
+                - "s3:DeleteObject"  # 🔹 Permiso para eliminar archivos en inputbucketlcy
               Resource:
                 - !Sub "arn:aws:s3:::${InputBucketName}"
                 - !Sub "arn:aws:s3:::${InputBucketName}/*"  
@@ -47,9 +48,11 @@ Resources:
                 - "s3:GetObject"
                 - "s3:PutObject"
                 - "s3:ListBucket"
+                - "s3:DeleteObject"  # 🔹 Asegura que la Lambda puede mover archivos
               Resource:
                 - !Sub "arn:aws:s3:::${OutputBucketName}"
-                - !Sub "arn:aws:s3:::${OutputBucketName}/*"    
+                - !Sub "arn:aws:s3:::${OutputBucketName}/*" 
+
      
 Outputs:
   S3ProcessingFunction:

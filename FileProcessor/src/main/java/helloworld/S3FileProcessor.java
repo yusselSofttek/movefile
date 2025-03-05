@@ -8,6 +8,8 @@ import com.amazonaws.services.s3.model.*;
 import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotification;
 import org.apache.poi.xssf.usermodel.*;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
+
 import java.io.*;
 import java.util.*;
 
@@ -16,7 +18,24 @@ public class S3FileProcessor {
     private final AmazonS3 s3Client = AmazonS3ClientBuilder.defaultClient();
 
     public void handleRequest(S3Event s3event, Context context) {
+        try {
+             final ObjectMapper objectMapperLog = new ObjectMapper()
+            .registerModule(new JodaModule())  // Agregar soporte para Joda-Time
+            .enable(SerializationFeature.INDENT_OUTPUT);  // Formato JSON indentado
+
+             
+            // Convertir el objeto S3Event a JSON para copiar y usar en pruebas
+            String eventJson = objectMapperLog.writeValueAsString(s3event);
+            System.out.println("📥 Evento S3 en JSON:\n" + eventJson);
+        } catch (IOException e) {
+            System.err.println("❌ Error serializando el evento S3: " + e.getMessage());
+        }
+     
+        
+
         for (S3EventNotification.S3EventNotificationRecord record : s3event.getRecords()) {
+            System.out.println("📥 Evento S3 notification recibido: " + record.toString());
+
             String bucketName = record.getS3().getBucket().getName();
             String fileName = record.getS3().getObject().getKey();
             
@@ -46,7 +65,7 @@ public class S3FileProcessor {
                 // Mover el archivo al bucket de salida
                 String destinationBucket = "outputbucketlcy";
                 s3Client.copyObject(bucketName, fileName, destinationBucket, fileName);
-                s3Client.deleteObject(bucketName, fileName);
+              //  s3Client.deleteObject(bucketName, fileName);
                 System.out.println("✅ Archivo movido a: " + destinationBucket);
 
             } catch (Exception e) {
@@ -65,7 +84,12 @@ public class S3FileProcessor {
         String line;
         while ((line = reader.readLine()) != null) {
             String[] values = line.split("\t");
-    
+            System.out.println("🔍 Datos leídos: " + Arrays.toString(values));
+            System.out.println("🔍 Encabezados: " + Arrays.toString(headers));
+            System.out.println("🔍 Longitud de valores: " + values.length);
+            System.out.println("🔍 Longitud de encabezados: " + headers.length);
+            
+
             // Si la línea no tiene la cantidad correcta de columnas, se ignora
             if (values.length < headers.length) {
                 System.out.println("⚠️ Advertencia: Línea con datos incompletos ignorada.");
